@@ -10,7 +10,8 @@ import UIKit
 
 class ToDoListViewController: UITableViewController {
 
-    let tableData = ["Goo to Office", "Cook Food", "Study", "Sleep"]
+    var tableData = ["Goo to Office", "Cook Food", "Study", "Sleep"]
+    var indexPath: IndexPath?
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -41,5 +42,27 @@ class ToDoListViewController: UITableViewController {
         
         tableView.deselectRow(at: indexPath, animated: true)
     }
+    
+    // MARK: Add New Items
+    @IBAction func addNewItems(_ sender: UIBarButtonItem) {
+        var uitextField = UITextField()
+        let uiAlertController = UIAlertController(title: "Add Item", message: "Add your item here:", preferredStyle: .alert)
+        let uiAlertButton = UIAlertAction(title: "OK", style: .default, handler: { action in
+            if uitextField.text! != "" {
+                self.tableData.append(uitextField.text!)
+                self.tableView.reloadData()
+            } else {
+                print("Empty string found!!!")
+            }
+        })
+        
+        uiAlertController.addTextField(configurationHandler: { textField in
+            textField.placeholder = "Type New Item"
+            uitextField = textField
+        })
+        uiAlertController.addAction(uiAlertButton)
+        self.present(uiAlertController, animated: true, completion: nil)
+    }
+    
 }
 
