@@ -11,10 +11,14 @@ import UIKit
 class ToDoListViewController: UITableViewController {
 
     var tableData = ["Goo to Office", "Cook Food", "Study", "Sleep"]
-    var indexPath: IndexPath?
+    var defaults = UserDefaults.standard
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
+        if let items = defaults.array(forKey: "ToDoListArray") as? [String] {
+            tableData = items
+        }
     }
     
     // UITableViewDataSource Method
@@ -51,6 +55,8 @@ class ToDoListViewController: UITableViewController {
             if uitextField.text! != "" {
                 self.tableData.append(uitextField.text!)
                 self.tableView.reloadData()
+                
+                self.defaults.set(self.tableData, forKey: "ToDoListArray")
             } else {
                 print("Empty string found!!!")
             }
