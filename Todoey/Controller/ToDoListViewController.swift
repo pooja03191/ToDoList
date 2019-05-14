@@ -12,29 +12,17 @@ class ToDoListViewController: UITableViewController {
 
     var tableData = [Item]()
     
+    // File path for custom plist file.
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        
-        let item = Item()
-        item.itemName = "Go to Office"
-        tableData.append(item)
-        
-        let item2 = Item()
-        item2.itemName = "Work"
-        tableData.append(item2)
-        
-        let item3 = Item()
-        item3.itemName = "Buy Vegetables"
-        tableData.append(item3)
-        
-        let item4 = Item()
-        item4.itemName = "Cook"
-        tableData.append(item4)
+        loadData()
         
     }
     
-    // UITableViewDataSource Method
+    // MARK: UITableViewDataSource Method
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return tableData.count
     }
@@ -42,27 +30,19 @@ class ToDoListViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "tableCell", for: indexPath)
-        cell.textLabel?.text = tableData[indexPath.row].itemName
+        let item = tableData[indexPath.row]
+        cell.textLabel?.text = item.itemName
+        cell.accessoryType = item.done ? .checkmark : .none
         return cell
     }
     
-    // UITableViewDelegate Method
+    // MARK: UITableViewDelegate Method
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         tableData[indexPath.row].done = !tableData[indexPath.row].done
-        if tableData[indexPath.row].done {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-        } else {
-            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-        }
-        
-//        if tableView.cellForRow(at: indexPath)?.accessoryType == .checkmark {
-//            tableView.cellForRow(at: indexPath)?.accessoryType = .none
-//        } else {
-//            tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-//        }
-        
+        saveData()
+        tableView.reloadData()
         tableView.deselectRow(at: indexPath, animated: true)
     }
     
@@ -75,6 +55,7 @@ class ToDoListViewController: UITableViewController {
                 let newItem = Item()
                 newItem.itemName = uitextField.text!
                 self.tableData.append(newItem)
+                self.saveData()
                 self.tableView.reloadData()
             } else {
                 print("Empty string found!!!")
@@ -89,5 +70,31 @@ class ToDoListViewController: UITableViewController {
         self.present(uiAlertController, animated: true, completion: nil)
     }
     
+    // MARK: Model Handling Methods
+    
+    // Saving data by encoding it to PropertyList format
+    func saveData() {
+        let encoder = PropertyListEncoder()
+        
+        do {
+            let data = try encoder.encode(tableData)
+            try data.write(to: dataFilePath!)
+        } catch {
+            print("Error while encoding data \(error)")
+        }
+    }
+    
+    // Fetching data by decoding PropertyList format to Item array
+    func loadData() {
+        let decoder = PropertyListDecoder()
+        if let data = try? Data(contentsOf: dataFilePath!) {
+            do
+            {
+              tableData = try decoder.decode([Item].self, from: data)
+            } catch {
+                print("Deoding Error \(error)")
+            }
+        }
+    }
 }
 
