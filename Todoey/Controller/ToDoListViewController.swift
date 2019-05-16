@@ -7,17 +7,21 @@
 //
 
 import UIKit
+import CoreData
 
 class ToDoListViewController: UITableViewController {
 
     var tableData = [Item]()
     
     // File path for custom plist file.
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+    // let dataFilePath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first?.appendingPathComponent("Items.plist")
+
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        
         loadData()
         
     }
@@ -31,13 +35,12 @@ class ToDoListViewController: UITableViewController {
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "tableCell", for: indexPath)
         let item = tableData[indexPath.row]
-        cell.textLabel?.text = item.itemName
+        cell.textLabel?.text = item.title
         cell.accessoryType = item.done ? .checkmark : .none
         return cell
     }
     
     // MARK: UITableViewDelegate Method
-    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
         tableData[indexPath.row].done = !tableData[indexPath.row].done
@@ -52,8 +55,11 @@ class ToDoListViewController: UITableViewController {
         let uiAlertController = UIAlertController(title: "Add Item", message: "Add your item here:", preferredStyle: .alert)
         let uiAlertButton = UIAlertAction(title: "OK", style: .default, handler: { action in
             if uitextField.text! != "" {
-                let newItem = Item()
-                newItem.itemName = uitextField.text!
+                let newItem = Item(context: self.context)
+                
+                newItem.title = uitextField.text!
+                newItem.done = false
+                
                 self.tableData.append(newItem)
                 self.saveData()
                 self.tableView.reloadData()
@@ -71,28 +77,68 @@ class ToDoListViewController: UITableViewController {
     }
     
     // MARK: Model Handling Methods
-    
-    // Saving data by encoding it to PropertyList format
     func saveData() {
-        let encoder = PropertyListEncoder()
         
+        // Saving data by encoding it to PropertyList format
+        //        let encoder = PropertyListEncoder()
+        //
+        //        do {
+        //            let data = try encoder.encode(tableData)
+        //            try data.write(to: dataFilePath!)
+        //        } catch {
+        //            print("Error while encoding data \(error)")
+        //        }
+        
+        // Saving data using Core data
         do {
-            let data = try encoder.encode(tableData)
-            try data.write(to: dataFilePath!)
+            try context.save()
         } catch {
-            print("Error while encoding data \(error)")
+            let error = error as NSError
+            print("Error while saving the data: \(error.userInfo)")
         }
     }
     
-    // Fetching data by decoding PropertyList format to Item array
-    func loadData() {
-        let decoder = PropertyListDecoder()
-        if let data = try? Data(contentsOf: dataFilePath!) {
-            do
-            {
-              tableData = try decoder.decode([Item].self, from: data)
-            } catch {
-                print("Deoding Error \(error)")
+    
+    func loadData(with request: NSFetchRequest<Item> = Item.fetchRequest()) {
+    
+        // Fetching data by decoding PropertyList format to Item array
+        //        let decoder = PropertyListDecoder()
+        //        if let data = try? Data(contentsOf: dataFilePath!) {
+        //            do
+        //            {
+        //              tableData = try decoder.decode([Item].self, from: data)
+        //            } catch {
+        //                print("Deoding Error \(error)")
+        //            }
+        //        }
+        
+        // Fetching data using Core data.
+        do {
+            tableData = try context.fetch(request)
+            print(tableData)
+        } catch {
+            let error = error as NSError
+            print("Error while loading data \(error.userInfo)")
+        }
+        tableView.reloadData()
+    }
+}
+
+extension ToDoListViewController: UISearchBarDelegate {
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let request: NSFetchRequest<Item> = Item.fetchRequest()
+        request.predicate = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        request.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        loadData(with: request)
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            loadData()
+            
+            DispatchQueue.main.async {
+                searchBar.resignFirstResponder()
             }
         }
     }
