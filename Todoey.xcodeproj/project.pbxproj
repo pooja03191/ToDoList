@@ -12,6 +12,7 @@
 		72AAA5C122887E2100805458 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 72AAA5BF22887E2100805458 /* Main.storyboard */; };
 		72AAA5C322887E2300805458 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 72AAA5C222887E2300805458 /* Assets.xcassets */; };
 		72AAA5C622887E2300805458 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 72AAA5C422887E2300805458 /* LaunchScreen.storyboard */; };
+		72E70787228DF5A600E872AC /* CategoryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72E70786228DF5A600E872AC /* CategoryTableViewController.swift */; };
 		72E8AA99228C120A008CFE61 /* DataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 72E8AA97228C120A008CFE61 /* DataModel.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
@@ -23,6 +24,7 @@
 		72AAA5C222887E2300805458 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		72AAA5C522887E2300805458 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		72AAA5C722887E2300805458 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		72E70786228DF5A600E872AC /* CategoryTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTableViewController.swift; sourceTree = "<group>"; };
 		72E8AA98228C120A008CFE61 /* DataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataModel.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -78,6 +80,7 @@
 			isa = PBXGroup;
 			children = (
 				72AAA5BD22887E2100805458 /* ToDoListViewController.swift */,
+				72E70786228DF5A600E872AC /* CategoryTableViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -173,6 +176,7 @@
 				72AAA5BE22887E2100805458 /* ToDoListViewController.swift in Sources */,
 				72E8AA99228C120A008CFE61 /* DataModel.xcdatamodeld in Sources */,
 				72AAA5BC22887E2100805458 /* AppDelegate.swift in Sources */,
+				72E70787228DF5A600E872AC /* CategoryTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
